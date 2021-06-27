@@ -1,0 +1,11 @@
+package com.example.clientrestaurant.exceptions;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class NotFoundClientException extends RuntimeException{
+    public NotFoundClientException(String message) {
+        super(message);
+    }
+}
