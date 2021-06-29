@@ -70,7 +70,12 @@ public class ClientServiceImpl implements ClientService{
 
     @Override
     public <S extends Client> S save(S s) {
-        return null;
+        Optional<Client> client = clientRepository.findById(s.getId());
+        if (client != null ) {
+           return clientRepository.save(s);
+        }else{
+            return null;
+        }
     }
 
     @Override
@@ -80,7 +85,11 @@ public class ClientServiceImpl implements ClientService{
 
     @Override
     public Optional<Client> findById(Long aLong) {
-        return Optional.empty();
+        Optional<Client> client = null;
+        if(aLong != null) {
+            client = clientRepository.findById(aLong);
+        }
+        return client;
     }
 
     @Override
