@@ -2,6 +2,7 @@ package com.example.clientrestaurant.controller;
 
 import com.example.clientrestaurant.model.Client;
 import com.example.clientrestaurant.model.Menu;
+
 import com.example.clientrestaurant.services.ClientService;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ public class ClientController {
     @Autowired
     ClientService clientService;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
+    //@Autowired
+   // private RestTemplate restTemplate;
+/*
     @Bean
     @LoadBalanced
     public RestTemplate restTemplate(RestTemplateBuilder builder){
@@ -34,12 +35,15 @@ public class ClientController {
         List<Client> clients = clientService.findAll();
         return new ResponseEntity<>(clients, HttpStatus.OK);
     }
+    */
+
 
     @PostMapping("/")
     public ResponseEntity<Client> saveClient(Client c){
         Client client =clientService.save(c);
         return new ResponseEntity<>(client, HttpStatus.OK);
     }
+    /*
     @HystrixCommand(fallbackMethod = "fallbackMethod2")
     @GetMapping("menu/")
     public Menu getAllFoods(){
@@ -49,4 +53,6 @@ public class ClientController {
     private Menu fallbackMethhod2(){
         return new Menu(1364L, "sushi");
     }
+    */
+
 }
