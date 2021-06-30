@@ -1,5 +1,7 @@
 package com.example.clientrestaurant.controller;
 
+import clientrestaurant.client.MenuClient;
+import com.example.clientrestaurant.dto.MenuDto;
 import com.example.clientrestaurant.model.Client;
 import com.example.clientrestaurant.model.Menu;
 
@@ -21,10 +23,22 @@ import java.util.List;
 public class ClientController {
     @Autowired
     ClientService clientService;
+    @Autowired
+    private MenuClient client;
 
-    //@Autowired
-   // private RestTemplate restTemplate;
-/*
+    public ClientController(ClientService clientService) {
+        this.clientService = clientService;
+    }
+    @HystrixCommand(fallbackMethod = "fallbackMethod2")
+    @GetMapping("menu/")
+    public MenuDto getAllFoods(){
+        MenuDto foods = client.getAllMenu();
+        return foods;
+    }
+    private Menu fallbackMethhod2(){
+        return new Menu(1364L, "sushi");
+    }
+
     @Bean
     @LoadBalanced
     public RestTemplate restTemplate(RestTemplateBuilder builder){
@@ -35,24 +49,14 @@ public class ClientController {
         List<Client> clients = clientService.findAll();
         return new ResponseEntity<>(clients, HttpStatus.OK);
     }
-    */
-
 
     @PostMapping("/")
     public ResponseEntity<Client> saveClient(Client c){
         Client client =clientService.save(c);
         return new ResponseEntity<>(client, HttpStatus.OK);
     }
-    /*
-    @HystrixCommand(fallbackMethod = "fallbackMethod2")
-    @GetMapping("menu/")
-    public Menu getAllFoods(){
-        Menu foods = restTemplate.getForObject("http://RECIPE/menu/", Menu.class);
-        return foods;
-    }
-    private Menu fallbackMethhod2(){
-        return new Menu(1364L, "sushi");
-    }
-    */
+
+
+
 
 }
