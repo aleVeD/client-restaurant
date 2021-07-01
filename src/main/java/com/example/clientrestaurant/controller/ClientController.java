@@ -3,8 +3,6 @@ package com.example.clientrestaurant.controller;
 import clientrestaurant.client.MenuClient;
 import com.example.clientrestaurant.dto.MenuDto;
 import com.example.clientrestaurant.model.Client;
-import com.example.clientrestaurant.model.Menu;
-
 import com.example.clientrestaurant.services.ClientService;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,17 +25,24 @@ public class ClientController {
     @Autowired
     private MenuClient client;
 
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, MenuClient client) {
         this.clientService = clientService;
+        this.client = client;
     }
-    @HystrixCommand(fallbackMethod = "fallbackMethod2")
+
+    @HystrixCommand(fallbackMethod = "fallbackMethhod2")
     @GetMapping("menu/")
     public MenuDto getAllFoods(){
         MenuDto foods = client.getAllMenu();
         return foods;
     }
-    private Menu fallbackMethhod2(){
-        return new Menu(1364L, "sushi");
+    private List<MenuDto> fallbackMethhod2(){
+        MenuDto menu1 = MenuDto.builder().id(1364L).name("sushi").build();
+        MenuDto menu2 = MenuDto.builder().id(757L).name("Arroz").build();
+        List<MenuDto> menu = new ArrayList<>();
+        menu.add(menu1);
+        menu.add(menu2);
+        return menu;
     }
 
     @Bean
@@ -55,8 +61,4 @@ public class ClientController {
         Client client =clientService.save(c);
         return new ResponseEntity<>(client, HttpStatus.OK);
     }
-
-
-
-
 }
