@@ -5,6 +5,9 @@ import com.example.clientrestaurant.dto.MenuDto;
 import com.example.clientrestaurant.model.Client;
 import com.example.clientrestaurant.services.ClientService;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.netflix.loadbalancer.BaseLoadBalancer;
+import com.example.clientrestaurant.config.MyRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -25,12 +28,18 @@ public class ClientController {
     @Autowired
     private MenuClient client;
 
+    @Bean
+    @LoadBalanced
+    public RestTemplate restTemplate(RestTemplateBuilder builder){
+        return builder.build();
+    }
     public ClientController(ClientService clientService, MenuClient client) {
         this.clientService = clientService;
         this.client = client;
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackMethhod2")
+    @HystrixCommand(fallbackMethod = "fallbackMethhod2", commandProperties = {
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "10")})
     @GetMapping("menu/")
     public MenuDto getAllFoods(){
         MenuDto foods = client.getAllMenu();
@@ -45,11 +54,7 @@ public class ClientController {
         return menu;
     }
 
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate(RestTemplateBuilder builder){
-        return builder.build();
-    }
+
     @GetMapping("/")
     public ResponseEntity<List<Client>> getAllClients(){
         List<Client> clients = clientService.findAll();
@@ -61,4 +66,6 @@ public class ClientController {
         Client client =clientService.save(c);
         return new ResponseEntity<>(client, HttpStatus.OK);
     }
+
+
 }
