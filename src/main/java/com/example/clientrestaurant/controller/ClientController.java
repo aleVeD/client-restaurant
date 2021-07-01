@@ -31,7 +31,8 @@ public class ClientController {
     @Bean
     @LoadBalanced
     public RestTemplate restTemplate(RestTemplateBuilder builder){
-        return builder.build();
+        return builder
+                .build();
     }
     public ClientController(ClientService clientService, MenuClient client) {
         this.clientService = clientService;
